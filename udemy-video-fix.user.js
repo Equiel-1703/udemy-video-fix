@@ -4,6 +4,7 @@
 // @version      1.0
 // @description  Fix stupid idiot video controls of Udemy not disappearing.
 // @author       Henrique Rodrigues Barraz
+// @license 	 GPL-3.0
 // @match        https://www.udemy.com/course/*
 // @icon         https://www.udemy.com/staticx/udemy/images/v7/apple-touch-icon.png
 // ==/UserScript==
