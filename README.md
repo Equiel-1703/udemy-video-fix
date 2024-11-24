@@ -19,31 +19,25 @@ This user script fixes the issue with Udemy video controls not disappearing when
    - [Violentmonkey](https://violentmonkey.github.io/)
 
 2. Add the user script to your script manager:
-   1. Using direct link: 
-   - Open the script manager dashboard.
-   - Create a new script.
-   - Copy and paste the contents of `udemy-video-fix.user.js` into the new script.
-   - Save the script.
+   1. Using direct link:
+      - If you click [here](https://github.com/Equiel-1703/udemy-fix-extension/raw/refs/heads/main/udemy-video-fix.user.js), your user script manager should automatically install it for you.
+   2. Manual Installation:
+      If for some reason you are not able to install the script automatically, you can:
+      - Open the script manager dashboard.
+      - Create a new script.
+      - Copy and paste the contents of `udemy-video-fix.user.js` into the new script.
+      - Save the script.
 
 ## Usage
 
 1. Navigate to any Udemy course video page.
 2. The script will automatically activate and manage the video controls.
-3. Enjoy an improved video watching experience!
+3. Enjoy your course :D
 
 ## License
 
 This project is licensed under the terms of the [GNU General Public License v3.0](LICENSE).
 
-## Author
-
-Henrique Rodrigues Barraz
-
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
-
-## Acknowledgements
-
-- Inspired by the need for a better video control experience on Udemy.
-- Thanks to the developers of the user script manager extensions.
+Contributions are very welcome! Open an issue or submit a pull request for any improvements or bug fixes :)
