@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Udemy Fix Video Controls
-// @namespace    henrique-rodrigues-barraz
+// @namespace    https://github.com/Equiel-1703
 // @version      1.0
 // @description  Fix stupid idiot video controls of Udemy not disappearing.
 // @author       Henrique Rodrigues Barraz
