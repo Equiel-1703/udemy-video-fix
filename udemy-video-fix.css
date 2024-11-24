@@ -1,0 +1,25 @@
+.animate-opacity {
+	transition-duration: 0.7s;
+	transition-property: opacity;
+}
+
+.animate-bottom {
+	transition-duration: 0.5s;
+	transition-property: bottom;
+}
+
+.no-cursor {
+	opacity: 0%;
+}
+
+.cursor-hover {
+	opacity: 100%;
+}
+
+.hide-mouse {
+	cursor: none;
+}
+
+.no-bottom-space {
+	bottom: 0rem;
+}
