@@ -161,8 +161,8 @@
 
 		// Helper function. Returns true if the cursor is inside 'elementRec'.
 		const cursorIsInsideElement = (elementRec) => {
-			if (cursorPosition.x >= elementRec.left && cursorPosition.x <= elementRec.right 
-				&& cursorPosition.y >= elementRec.top && cursorPosition.y <= elementRec.bottom) {
+			if (cursorPosition.x >= elementRec.left && cursorPosition.x <= elementRec.right &&
+				cursorPosition.y >= elementRec.top && cursorPosition.y <= elementRec.bottom) {
 				return true;
 			}
 			return false;
