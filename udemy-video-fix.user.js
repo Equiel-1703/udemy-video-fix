@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Udemy Fix Video Controls
 // @namespace    https://github.com/Equiel-1703
-// @version      1.1
+// @version      1.2
 // @description  Fix stupid idiot video controls of Udemy not disappearing.
 // @author       Henrique Rodrigues Barraz
 // @license 	 GPL-3.0
@@ -24,8 +24,8 @@
 	// New CSS classes
 	const animateOpacity = "animate-opacity";
 	const animateBottom = "animate-bottom";
-	const noCursor = "no-cursor";
-	const cursorHover = "cursor-hover";
+	const hideUIClass = "hide-UI";
+	const unhideUIClass = "unhide-UI";
 	const hideMouse = "hide-mouse";
 	const noBottomSpace = "no-bottom-space";
 
@@ -41,11 +41,11 @@
 		transition-property: bottom;
 	}
 
-	.no-cursor {
+	.hide-UI {
 		opacity: 0%;
 	}
 
-	.cursor-hover {
+	.unhide-UI {
 		opacity: 100%;
 	}
 
@@ -66,114 +66,148 @@
 	const videoUIElementsClass = "div.user-activity--hide-when-user-inactive--Oc6Cn";
 	const videoContainerClass = "div.curriculum-item-view--content--aaJOw";
 	const captionsClass = "div.captions-display--captions-container--PqdGQ";
-
+	
 	// Flag to check if the video changes are being monitored or not
 	let monitoringVideoChanges = false;
+	// Global var to store the cursor position
+	let cursorPosition = { x: 0, y: 0 };
+	
+	// Function to track the cursor position
+	const trackCursorPosition = () => {
+		document.addEventListener("mousemove", (event) => {
+			cursorPosition = { x: event.clientX, y: event.clientY };
+		});
+	};
 
 	// Function to fix the video controls
 	const fixUdemyVideoControls = () => {
-		// Get all video ui (progress bar, title etc)
-		const videoUIElements = document.querySelectorAll(videoUIElementsClass + ", " + controlBarClass)
-	
-		console.log("UdemyVideoFix> Found video UI elements: ", videoUIElements);
-	
-		// Flag to check if the mouse is over the UI elements
-		let mouseOverUIElement = false;
-	
-		// Add animate opacity class and add listeners to check if the mouse is over the UI elements
-		videoUIElements.forEach((el) => {
-			el.classList.add(animateOpacity);
-			
-			el.addEventListener("mouseover", () => {
-				mouseOverUIElement = true;
-			});
-	
-			el.addEventListener("mouseleave", () => {
-				mouseOverUIElement = false;
-			});
-		});
-	
 		// Get the captions div
 		const captionsDiv = document.querySelector(captionsClass);
 	
 		// Check if returned null
 		if (captionsDiv == null) {
-			console.log("Fuck, no captions div found.");
+			console.log("UdemyVideoFix> Fuck, no captions div found.");
 		} else {
 			captionsDiv.classList.add(animateBottom);
 		}
+
+		// Get all video ui (progress bar, title etc)
+		const videoUIElements = document.querySelectorAll(videoUIElementsClass + ", " + controlBarClass)
+	
+		console.log("UdemyVideoFix> Found video UI elements: ", videoUIElements);
+	
+		// Add animate opacity class for all video UI elements
+		videoUIElements.forEach((el) => {
+			el.classList.add(animateOpacity);
+		});
 	
 		// Now, I need the video container div
 		const videoContainerDiv = document.querySelector(videoContainerClass);
 	
 		// Check if returned null
 		if (videoContainerDiv == null) {
-			console.log("Fuck, something went really wrong.");
+			console.log("UdemyVideoFix> Fuck, something went really wrong. Couldn't find VideoContainer div.");
 			return;
 		}
 		
 		// Flag indicating if UI is visible
 		let uiVisible = true;
 	
-		// Functions to hide UI elements
+		// Function to hide UI elements
 		const hideUI = () => {
+			if (!uiVisible) {
+				return;
+			}
+
 			if (captionsDiv) {
 				captionsDiv.classList.add(noBottomSpace);
 			}
 	
 			videoUIElements.forEach((vUI) => {
-				if (!vUI.classList.contains(noCursor)) {
-					vUI.classList.add(noCursor);
+				if (!vUI.classList.contains(hideUIClass)) {
+					vUI.classList.add(hideUIClass);
 				}
-				vUI.classList.remove(cursorHover);
+				vUI.classList.remove(unhideUIClass);
 			});
 	
 			videoContainerDiv.classList.add(hideMouse);
 	
 			uiVisible = false;
 		};
-	
-		// Timeout settings
-		const timeoutDelayMS = 4_000; // 4 sec to controls hide after no mouse movement
-		let timeoutID = null;
 
 		// Function to show UI elements
 		const showUI = () => {
-			// Clear previous timeout (if any)
-			clearTimeout(timeoutID);
-			
+			resetMouseTimeout();
+
+			if (uiVisible) {
+				return;
+			}
+
 			if (captionsDiv) {
 				captionsDiv.classList.remove(noBottomSpace);
 			}
 	
 			videoUIElements.forEach((vUI) => {
-				if (!vUI.classList.contains(cursorHover)) {
-					vUI.classList.add(cursorHover);
+				if (!vUI.classList.contains(unhideUIClass)) {
+					vUI.classList.add(unhideUIClass);
 				}
-				vUI.classList.remove(noCursor);
+				vUI.classList.remove(hideUIClass);
 			});
 	
 			videoContainerDiv.classList.remove(hideMouse);
 	
-			uiVisible = true;
-	
-			if (!mouseOverUIElement) {
-				timeoutID = setTimeout(hideUI, timeoutDelayMS);
+			uiVisible = true;	
+		};
+
+		// Helper function. Returns true if the cursor is inside 'elementRec'.
+		const cursorIsInsideElement = (elementRec) => {
+			if (cursorPosition.x >= elementRec.left && cursorPosition.x <= elementRec.right 
+				&& cursorPosition.y >= elementRec.top && cursorPosition.y <= elementRec.bottom) {
+				return true;
+			}
+			return false;
+		};
+
+		// Function to hide UI elements if the cursor is not inside any of them
+		const conditionalHideUIElements = () => {
+			let canHideCursor = true;
+
+			for (const vUI of videoUIElements) {
+				let vUIRec = vUI.getBoundingClientRect();
+
+				if (cursorIsInsideElement(vUIRec)) {
+					canHideCursor = false;
+					break;
+				}
+			}
+
+			if (canHideCursor) {
+				hideUI();
+			} else {
+				resetMouseTimeout();
 			}
 		};
+
+		// Timeout settings
+		const timeoutDelayMS = 4_000; // 4 sec to controls hide after no mouse movement
+		let timeoutID = null;
+
+		const resetMouseTimeout = () => {
+			// Clear previous timeout (if any)
+			clearTimeout(timeoutID);
+
+			// Set a new timeout
+			timeoutID = setTimeout(conditionalHideUIElements, timeoutDelayMS);
+		};
 	
-		// I will add a listener to detect when the mouse hover these elements.
-		videoContainerDiv.addEventListener("mouseover", showUI);
+		// I will add a listener to detect when the mouse hover the video container.
+		videoContainerDiv.addEventListener("mouseenter", showUI);
 	
 		// And a listener to detect when the mouse leaves the div
 		videoContainerDiv.addEventListener("mouseleave", hideUI);
 	
 		// Add listener to show UI when mouse is moved (while hovering the video only)
-		videoContainerDiv.addEventListener("mousemove", () => {
-			if (!uiVisible) {
-				showUI();
-			}
-		});
+		videoContainerDiv.addEventListener("mousemove", showUI);
 	};
 
 	// This function will monitor the body to check when the video elements are loaded, then fix the video controls
@@ -193,8 +227,9 @@
 				fixUdemyVideoControls();
 
 				// Start monitoring for next and previous video changes if not already monitoring
-				if (!monitoringVideoChanges)
+				if (!monitoringVideoChanges) {
 					monitorNextPreviousVideo();
+				}
 			}
 		});
 		
@@ -238,6 +273,8 @@
 		monitoringVideoChanges = true;
 	};
 
+	// Start tracking the cursor position
+	trackCursorPosition();
 	// Start monitoring for video elements load
 	monitorElementsLoadAndFix();
 })();

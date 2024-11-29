@@ -8,11 +8,11 @@
 	transition-property: bottom;
 }
 
-.no-cursor {
+.hide-UI {
 	opacity: 0%;
 }
 
-.cursor-hover {
+.unhide-UI {
 	opacity: 100%;
 }
 
