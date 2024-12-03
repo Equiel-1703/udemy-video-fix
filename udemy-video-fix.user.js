@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Udemy Fix Video Controls
 // @namespace    https://github.com/Equiel-1703
-// @version      1.2
+// @version      1.2.1
 // @description  Fix stupid idiot video controls of Udemy not disappearing.
 // @author       Henrique Rodrigues Barraz
 // @license 	 GPL-3.0
