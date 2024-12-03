@@ -208,6 +208,9 @@
 	
 		// Add listener to show UI when mouse is moved (while hovering the video only)
 		videoContainerDiv.addEventListener("mousemove", showUI);
+
+		// By default, we will show the UI once this function is called
+		showUI();
 	};
 
 	// This function will monitor the body to check when the video elements are loaded, then fix the video controls
